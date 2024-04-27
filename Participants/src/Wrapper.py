@@ -1,137 +1,37 @@
 import tkinter as tk
 import math
+import random
+
+from Vector2D import Vector2D
+from Player import Player
+
+MAX_ASTEROIDS = 20
 
 
-class Vector2D:
-    def __init__(self, x, y) -> None:
-        """
-        Initializes the 2D vector
-        :param x:
-        :param y:
-        """
-        self.x = x
-        self.y = y
-
-    def __add__(self, other) -> 'Vector2D':
-        """
-        Adds two vectors
-        :param other:
-        :return:
-        """
-        return Vector2D(self.x + other.x, self.y + other.y)
-
-    def __sub__(self, other) -> 'Vector2D':
-        """
-        Subtracts two vectors
-        :param other:
-        :return:
-        """
-        return Vector2D(self.x - other.x, self.y - other.y)
-
-    def __truediv__(self, other) -> 'Vector2D':
-        """
-        Divides two vectors
-        :param other:
-        :return:
-        """
-        return Vector2D(self.x / other, self.y / other)
-
-    def __str__(self) -> str:
-        """
-        Returns the string representation of the vector
-        :return:
-        """
-        return f"({self.x}, {self.y})"
-
-
-class Bullet:
-    def __init__(self, position, velocity, direction):
+class Asteroid:
+    def __init__(self, position: Vector2D, velocity: Vector2D, size: int, screen_width: int = 800, screen_height: int = 600) -> None:
         self.position = position
         self.velocity = velocity
-        self.direction = direction
-        self.length = 10
-
-    def update(self, canvas: tk.Canvas) -> bool:
-        rotated_direction = (self.direction + 90) % 360
-        end_point = Vector2D(
-            self.position.x + self.length * math.cos(math.radians(rotated_direction)),
-            self.position.y + self.length * math.sin(math.radians(rotated_direction))
-        )
-        canvas.create_line(self.position.x, self.position.y, end_point.x, end_point.y, fill="white")
-        self.position = Vector2D(
-            (self.position.x + self.velocity.x),
-            (self.position.y + self.velocity.y)
-        )
-        if (self.position.x < 0 or self.position.x > canvas.winfo_width() or
-                self.position.y < 0 or self.position.y > canvas.winfo_height()):
-            return False
-        else:
-            return True
-
-
-class Player:
-    def __init__(self, position: Vector2D, velocity: Vector2D, direction: int, size: int = 2, screen_width: int = 800, screen_height: int = 600) -> None:
-        self.position = position
-        self.velocity = velocity
-        self.direction = direction
         self.size = size
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.max_speed = 10
-        self.bullets = []
 
-    def update(self, canvas: tk.Canvas) -> None:
+    def update(self, canvas: tk.Canvas) -> bool:
         self.position = Vector2D((self.position.x + self.velocity.x) % self.screen_width, (self.position.y + self.velocity.y) % self.screen_height)
-
-        triangle = [
-            (self.position.x, self.position.y - 10 * self.size),
-            (self.position.x - 5 * self.size, self.position.y + 10 * self.size),
-            (self.position.x + 5 * self.size, self.position.y + 10 * self.size),
-        ]
-
-        theta = math.radians(self.direction)
-        cos_theta = math.cos(theta)
-        sin_theta = math.sin(theta)
-
-        triangle = [
-            (
-                cos_theta * (x - self.position.x) - sin_theta * (y - self.position.y) + self.position.x,
-                sin_theta * (x - self.position.x) + cos_theta * (y - self.position.y) + self.position.y,
-            )
-            for x, y in triangle
-        ]
-
-        canvas.create_polygon(triangle, fill="white")
-
-        self.bullets = [bullet for bullet in self.bullets if bullet.update(canvas)]
-
-    def accelerate(self, acceleration: int) -> None:
-        new_velocity = Vector2D(
-            self.velocity.x + acceleration * math.sin(math.radians(self.direction)),
-            self.velocity.y - acceleration * math.cos(math.radians(self.direction)),
+        canvas.create_oval(
+            self.position.x - self.size, self.position.y - self.size,
+            self.position.x + self.size, self.position.y + self.size,
+            fill="white"
         )
-        speed = math.sqrt(new_velocity.x**2 + new_velocity.y**2)
-        if speed > self.max_speed:
-            new_velocity = Vector2D(new_velocity.x * self.max_speed / speed, new_velocity.y * self.max_speed / speed)
-        self.velocity = new_velocity
-
-    def shoot(self, canvas: tk.Canvas) -> None:
-        bullet_speed = 10  # Set a constant speed for the bullet
-        bullet_velocity = Vector2D(
-            bullet_speed * math.sin(math.radians(self.direction)),
-            -bullet_speed * math.cos(math.radians(self.direction))
-        )
-        bullet = Bullet(Vector2D(self.position.x, self.position.y), bullet_velocity, self.direction)
-        self.bullets.append(bullet)
-
-    def rotate(self, angle: int) -> None:
-        self.direction += angle
+        return True
 
 
 class Wrapper:
     def __init__(self, width: int = 800, height: int = 600):
         self.player = Player(Vector2D(width / 2, height / 2), Vector2D(0, 0), 0, 1, width, height)
         self.score = 0
+        self.astroids = []
+        self.is_game_over = False
 
         self.root: tk.Tk = tk.Tk()
         self.root.title("Wrapper")
@@ -151,7 +51,36 @@ class Wrapper:
         self.keys_pressed[event.keysym] = False
 
     def update_score(self) -> None:
-        self.main_canvas.create_text(50, 10, text=f"Score: {self.score}", fill="white", font=("Arial", 16))
+        self.main_canvas.create_text(60, 15, text=f"Score: {self.score}", fill="white", font=("Arial", 16))
+
+    def spawn_asteroids(self):
+        while len(self.astroids) < MAX_ASTEROIDS:
+            position = Vector2D(random.uniform(0, self.root.winfo_width()), random.uniform(0, self.root.winfo_height()))
+
+            while math.hypot(self.player.position.x - position.x, self.player.position.y - position.y) < self.player.size + 50:
+                position = Vector2D(random.uniform(0, self.root.winfo_width()), random.uniform(0, self.root.winfo_height()))
+
+            velocity = Vector2D(random.uniform(-1, 1), random.uniform(-1, 1))
+
+            size = random.randint(10, 50)
+
+            self.astroids.append(Asteroid(position, velocity, size, self.root.winfo_width(), self.root.winfo_height()))
+
+    def asteroid_manager(self) -> None:
+        for asteroid in self.astroids:
+            if math.hypot(self.player.position.x - asteroid.position.x, self.player.position.y - asteroid.position.y) < self.player.size + asteroid.size:
+                self.is_game_over = True
+                return
+
+            for bullet in self.player.bullets:
+                if math.hypot(bullet.position.x - asteroid.position.x, bullet.position.y - asteroid.position.y) < bullet.length + asteroid.size:
+                    self.astroids.remove(asteroid)
+                    self.player.bullets.remove(bullet)
+                    self.score += 100
+                    break
+
+        self.spawn_asteroids()
+        self.root.after(50, self.asteroid_manager)
 
     def update(self) -> None:
         if self.keys_pressed.get("Escape") or self.keys_pressed.get("q"):
@@ -167,12 +96,18 @@ class Wrapper:
         if self.keys_pressed.get("space"):
             self.player.shoot(self.main_canvas)
 
-        self.main_canvas.delete("all")
-        self.update_score()
-        self.player.update(self.main_canvas)
-        self.root.update()
-        self.root.after(50, self.update)
+        if self.is_game_over:
+            self.main_canvas.create_text(self.root.winfo_width() / 2, self.root.winfo_height() / 2, text="Game Over", fill="white", font=("Arial", 32))
+            self.root.after(100, self.update)
+        else:
+            self.main_canvas.delete("all")
+            self.update_score()
+            self.player.update(self.main_canvas)
+            self.astroids = [astroid for astroid in self.astroids if astroid.update(self.main_canvas)]
+            self.root.update()
+            self.root.after(50, self.update)
 
     def run(self):
         self.root.after(0, self.update)
+        self.root.after(2000, self.asteroid_manager)
         self.root.mainloop()
