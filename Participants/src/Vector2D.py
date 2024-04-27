@@ -5,8 +5,7 @@ class Vector2D:
         :param x: x-coordinate
         :param y: y-coordinate
         """
-        self.x = x
-        self.y = y
+        pass
 
     def __add__(self, other) -> 'Vector2D':
         """
@@ -14,7 +13,12 @@ class Vector2D:
         :param other: the other vector to add
         :return:
         """
-        return Vector2D(self.x + other.x, self.y + other.y)
+        pass
+
+    # TODO: Implémenter les méthodes:
+    # __add__(self, other) -> 'Vector2D'
+    # __sub__(self, other) -> 'Vector2D'
+    # __str__(self) -> str
 
     def __sub__(self, other) -> 'Vector2D':
         """
@@ -22,19 +26,11 @@ class Vector2D:
         :param other: the other vector to subtract
         :return:
         """
-        return Vector2D(self.x - other.x, self.y - other.y)
-
-    def __truediv__(self, other) -> 'Vector2D':
-        """
-        Divides two vectors
-        :param other: the other vector to divide
-        :return:
-        """
-        return Vector2D(self.x / other, self.y / other)
+        pass
 
     def __str__(self) -> str:
         """
         Returns the string representation of the vector
         :return:
         """
-        return f"({self.x}, {self.y})"
+        pass

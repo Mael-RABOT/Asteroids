@@ -24,6 +24,13 @@ Gardez à l'esprit que ce projet est difficile par conception, demandez à Googl
 
 **Good luck soldier !**
 
+## Instructions
+
+Tout au long du sujet, les parties de code à complétées seront indiquées par des commentaires `# TODO`.<br>
+Si la coloration syntaxique de votre éditeur de texte ne vous permet pas de les voir, vous pouvez utiliser la fonction de recherche de texte de votre éditeur pour les trouver.<br>
+
+Pensez bien à lire tous les commentaires, ils sont là pour vous aider.<br>
+
 ## Variables & types
 
 Comme vous le savez sûrement, Python utilise un système à typage faible. Cela signifie que vous n'avez pas besoin de déclarer le type d'une variable avant de l'utiliser. Le type d'une variable est déterminé par la valeur que vous lui attribuez.

@@ -6,8 +6,8 @@ def main() -> None:
     Entry point of the program.
     :return:
     """
-    wrapper = Wrapper.Wrapper(1920, 1080)
-    wrapper.run()
+    # TODO: Créer une instance de la classe Wrapper et appeler la méthode run
+    pass
 
 
 if __name__ == "__main__":

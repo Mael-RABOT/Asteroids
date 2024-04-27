@@ -3,6 +3,7 @@ import tkinter as tk
 from Vector2D import Vector2D
 
 
+# TODO: Comprendre cette classe (oui, il n'y à rien à faire ici :D)
 class Asteroid:
     """
     A class to represent an asteroid.

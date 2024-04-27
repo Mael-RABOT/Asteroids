@@ -31,13 +31,13 @@ class Bullet:
             self.position.x + self.length * math.cos(math.radians(rotated_direction)),
             self.position.y + self.length * math.sin(math.radians(rotated_direction))
         )
-        canvas.create_line(self.position.x, self.position.y, end_point.x, end_point.y, fill="white")
+
+        # TODO: Créer la représentation graphique de la balle, utilise la méthode create_line du canvas
+        pass
+
         self.position = Vector2D(
             (self.position.x + self.velocity.x),
             (self.position.y + self.velocity.y)
         )
-        if (self.position.x < 0 or self.position.x > canvas.winfo_width() or
-                self.position.y < 0 or self.position.y > canvas.winfo_height()):
-            return False
-        else:
-            return True
+        # TODO: Return True si la balle est toujours dans le canvas, False sinon
+        pass

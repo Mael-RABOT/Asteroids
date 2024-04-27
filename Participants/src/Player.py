@@ -39,6 +39,8 @@ class Player:
         :param canvas: canvas to draw the player
         :return:
         """
+        # Si tu aimes les maths, essaie de comprendre ce qui se passe ici.
+        # Si tu détestes ca, c'est ta chance, tu peux ignorer les calculs
         self.position = Vector2D((self.position.x + self.velocity.x) % self.screen_width,
                                  (self.position.y + self.velocity.y) % self.screen_height)
 
@@ -60,12 +62,19 @@ class Player:
             for x, y in triangle
         ]
 
-        canvas.create_polygon(triangle, fill="white")
+        # TODO: Créer un polygone pour représenter le joueur. Utilise la méthode create_polygon de canvas.
+        pass
 
-        self.bullets = [bullet for bullet in self.bullets if bullet.update(canvas)]
+        # TODO: Met à jour les balles avec la méthode update de Bullet.
+        pass
+        # TODO: Filtrer les balles qui ne sont plus actives. (tips: utilise le type de retour de 'update')
+        pass
 
-        if self.shoot_cooldown > 0:
-            self.shoot_cooldown -= 1
+        # tips: les deux étapes précédentes peuvent être faites en une seule ligne.
+
+        # TODO: Met à jour le cooldown de tir.
+        pass
+
 
     def accelerate(self, acceleration: int) -> None:
         """
@@ -77,9 +86,13 @@ class Player:
             self.velocity.x + acceleration * math.sin(math.radians(self.direction)),
             self.velocity.y - acceleration * math.cos(math.radians(self.direction)),
         )
-        speed = math.sqrt(new_velocity.x ** 2 + new_velocity.y ** 2)
-        if speed > self.max_speed:
-            new_velocity = Vector2D(new_velocity.x * self.max_speed / speed, new_velocity.y * self.max_speed / speed)
+        speed = math.sqrt(new_velocity.x ** 2 + new_velocity.y ** 2) # Ici, on fait un calcul sur un vecteur qui pourrait être simplifié par ... une surcharge d'opérateur !
+
+        # La ligne suivante sert à limiter la vitesse si celle ci dépasse la vitesse maximale. Utilise cette ligne
+        #             new_velocity = Vector2D(new_velocity.x * self.max_speed / speed, new_velocity.y * self.max_speed / speed)
+        # TODO: Limiter la vitesse du joueur à self.max_speed.
+        pass
+
         self.velocity = new_velocity
 
     def shoot(self) -> None:
@@ -87,16 +100,19 @@ class Player:
         Shoot a bullet.
         :return:
         """
-        if len(self.bullets) > MAX_BULLETS or self.shoot_cooldown > 0:
-            return
+        # TODO: Ajouter une condition pour vérifier si le joueur peut tirer. (tips: utilise la macro MAX_BULLETS)
 
         bullet_speed = 10
         bullet_velocity = Vector2D(
             bullet_speed * math.sin(math.radians(self.direction)),
             -bullet_speed * math.cos(math.radians(self.direction))
         )
-        bullet = Bullet(Vector2D(self.position.x, self.position.y), bullet_velocity, self.direction)
-        self.bullets.append(bullet)
+
+        # TODO: Créer une instance de Bullet et l'ajouter à la liste des balles.
+        # bullet = ...
+        pass
+        # self.bullets.append(bullet) # A décommenter une fois que la balle est créée
+
         self.shoot_cooldown = COOLDOWN
 
     def rotate(self, angle: int) -> None:
@@ -105,4 +121,5 @@ class Player:
         :param angle: angle to rotate
         :return:
         """
-        self.direction += angle
+        # TODO: Modifier l'angle du joueur. (tips: utilise le type des attributs pour trouver le nom de l'attribut à modifier)
+        pass

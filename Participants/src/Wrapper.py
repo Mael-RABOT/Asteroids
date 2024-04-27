@@ -9,6 +9,7 @@ from Asteroids import Asteroid
 MAX_ASTEROIDS = 20
 
 
+# tips: Ce fichier est un peu plus complexe que les autres, il peux être interessant de le faire après avoir compris les autres fichiers
 class Wrapper:
     """
     A class to represent the game wrapper.
@@ -28,8 +29,9 @@ class Wrapper:
         self.root.title("Wrapper")
         self.root.geometry(f"{width}x{height}")
         self.root.resizable(False, False)
-        self.root.bind("<KeyPress>", self.on_key_press)
-        self.root.bind("<KeyRelease>", self.on_key_release)
+        # TODO: Utilise la méthode bind de root pour lier les événements clavier à on_key_press et on_key_release
+        pass
+
         self.keys_pressed = {}
 
         self.main_canvas: tk.Canvas = tk.Canvas(self.root, width=width, height=height, bg="black")
@@ -48,14 +50,16 @@ class Wrapper:
         Handles the key release event.
         :param event: tkinter event object
         """
-        self.keys_pressed[event.keysym] = False
+        # TODO: Modifier la data lié à la touche
+        pass
 
     def update_score(self) -> None:
         """
         Updates the score on the canvas.
         :return:
         """
-        self.main_canvas.create_text(60, 15, text=f"Score: {self.score}", fill="white", font=("Arial", 16))
+        # TODO: Créer un text pour afficher le score. Tips: les coordonnées sont (60, 15) pour une police de taille de 16
+        pass
 
     def spawn_asteroids(self):
         """
@@ -63,18 +67,10 @@ class Wrapper:
         :return:
         """
         while len(self.astroids) < MAX_ASTEROIDS:
-            position = Vector2D(random.uniform(0, self.root.winfo_width()), random.uniform(0, self.root.winfo_height()))
-
-            while (math.hypot(self.player.position.x - position.x, self.player.position.y - position.y)
-                   < self.player.size + 50):
-                position = Vector2D(random.uniform(0, self.root.winfo_width()),
-                                    random.uniform(0, self.root.winfo_height()))
-
-            velocity = Vector2D(random.uniform(-1, 1), random.uniform(-1, 1))
-
-            size = random.randint(10, 50)
-
-            self.astroids.append(Asteroid(position, velocity, size, self.root.winfo_width(), self.root.winfo_height()))
+            # TODO: Calcul et fait apparaitre un ou des astéroides
+            # Cette fonction peut être compliquée car elle appelle à quelques notions de mathématiques.
+            # Si les calculs ne sont pas clairs, n'hésite pas à demander de l'aide, c'est un atelier de programmation avant tout.
+            pass
 
     def asteroid_manager(self) -> None:
         """
@@ -84,16 +80,14 @@ class Wrapper:
         for asteroid in self.astroids:
             if math.hypot(self.player.position.x - asteroid.position.x,
                           self.player.position.y - asteroid.position.y) < self.player.size + asteroid.size:
-                self.is_game_over = True
-                return
+                # TODO: Gérer la collision entre le joueur et un astéroide
+                pass
 
             for bullet in self.player.bullets:
                 if math.hypot(bullet.position.x - asteroid.position.x,
                               bullet.position.y - asteroid.position.y) < bullet.length + asteroid.size:
-                    self.astroids.remove(asteroid)
-                    self.player.bullets.remove(bullet)
-                    self.score += 100
-                    break
+                    # TODO: Gérer la collision entre une balle et un astéroide
+                    pass
 
         self.spawn_asteroids()
         self.root.after(50, self.asteroid_manager)
@@ -105,29 +99,22 @@ class Wrapper:
         """
         if self.keys_pressed.get("Escape") or self.keys_pressed.get("q"):
             self.root.quit()
-        if self.keys_pressed.get("Up"):
-            self.player.accelerate(1)
-        if self.keys_pressed.get("Down"):
-            self.player.accelerate(-1)
-        if self.keys_pressed.get("Left"):
-            self.player.rotate(-5)
-        if self.keys_pressed.get("Right"):
-            self.player.rotate(5)
-        if self.keys_pressed.get("space"):
-            self.player.shoot()
+        # TODO: Gère les events clavier pour les touches "Up", "Down", "Left", "Right" et "space"
+        pass
 
         if self.is_game_over:
             self.main_canvas.create_text(self.root.winfo_width() / 2, self.root.winfo_height() / 2, text="Game Over",
                                          fill="white", font=("Arial", 32))
             self.root.after(100, self.update)
         else:
-            self.main_canvas.delete("all")
-            self.update_score()
-            self.player.update(self.main_canvas)
-            for asteroid in self.astroids:
-                asteroid.update(self.main_canvas)
-            self.root.update()
+            # TODO: Met à jour le jeu:
+            # - score
+            # - joueur
+            # - astéroides
+            # - canvas
+            pass
             self.root.after(50, self.update)
+
 
     def run(self) -> None:
         """
